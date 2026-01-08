@@ -5,10 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ITABASHI BEYBLADE HUD - Ver.15.0</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dseg@0.46.0/css/dseg.min.css">
+
     
     <style>
+<style>
+        /* ▼▼▼ ここから追加 ▼▼▼ */
+        @font-face {
+            font-family: 'DSEG7 Classic';
+            src: url('./fonts/DSEG7Classic-BoldItalic.ttf') format('truetype');
+            font-weight: bold;
+            font-style: italic;
+        }
+        @font-face {
+            font-family: 'Chakra Petch';
+            src: url('./fonts/ChakraPetch-BoldItalic.ttf') format('truetype');
+            font-weight: bold;
+            font-style: italic;
+        }
+        @font-face {
+            font-family: 'Orbitron';
+            src: url('./fonts/Orbitron-Black.ttf') format('truetype');
+            font-weight: 900;
+        }
+        /* ▲▲▲ ここまで追加 ▲▲▲ */
+
+        :root {
+            /* ...以下、元のコード... */
         :root {
             --bx-green: #b6ff00; --bx-blue: #00eaff; --bx-orange: #ffaa00;
             --bx-red-orange: #ff4500; --bx-red: #ff0055;
@@ -504,7 +526,6 @@
             document.getElementById('score2').style.color = "white";
             document.getElementById('score2').style.textShadow = defaultShadow;
             document.getElementById('win-display').classList.remove('show-win');
-
             showIntro();
         }
 
