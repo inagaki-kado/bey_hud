@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ITABASHI BEYBLADE HUD - Ver.15.0</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dseg@0.46.0/css/dseg.min.css">
+    
+    <style>
+        :root {
+            --bx-green: #b6ff00; --bx-blue: #00eaff; --bx-orange: #ffaa00;
+            --bx-red-orange: #ff4500; --bx-red: #ff0055;
+            --bx-yellow: #fff000;
+        }
+
+        body { 
+            margin: 0; padding: 0; 
+            background: black; 
+            font-family: 'Chakra Petch', sans-serif; overflow: hidden; color: white; 
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s;
+        }
+
+        body.green-mode { background-color: #00ff00 !important; }
+        body.green-mode #camera-bg { display: none; }
+        
+        #camera-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 1; }
+
+        .scan-line { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2; 
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.03) 3px); 
+            pointer-events: none; 
+        }
+
+        /* システムボタン */
+        .system-btn { 
+            position: fixed; z-index: 80;
+            background: rgba(0,0,0,0.5); color: #aaa; border: 1px solid #555; 
+            width: 50px; height: 50px; 
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; font-weight: bold; cursor: pointer; 
+            font-family: 'Orbitron', sans-serif; transition: 0.3s; border-radius: 8px;
+            outline: none;
+        }
+        .system-btn:hover { color: var(--bx-green); border-color: var(--bx-green); background: rgba(0,0,0,0.7); }
+        .system-btn:active { background: #333; transform: scale(0.95); }
+
+        .btn-reset { top: 20px; left: 20px; } 
+        .btn-timer { top: 20px; right: 20px; } 
+        .btn-bg { bottom: 20px; left: 20px; }
+        .btn-winpoint { bottom: 20px; right: 20px; color: var(--bx-orange); border-color: var(--bx-orange); }
+        /* ★追加: フルスクリーンボタン */
+        .btn-fullscreen { bottom: 20px; right: 80px; }
+
+        /* プレイヤー情報 */
+        .player-info {
+            position: fixed; top: 110px; z-index: 50;
+            display: flex; flex-direction: column;
+        }
+        #p1-info { left: 20px; align-items: flex-start; text-align: left; }
+        #p2-info { right: 20px; align-items: flex-end; text-align: right; }
+
+        .name-input { 
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 40px; font-style: italic; font-weight: bold;
+            color: var(--bx-green); text-shadow: 2px 2px 0px black; 
+            background: transparent; border: none;
+            border-bottom: 2px solid var(--bx-green);
+            padding-bottom: 5px; margin-bottom: 5px; 
+            width: 400px; outline: none;
+        }
+        #p1-info .name-input { text-align: left; }
+        #p2-info .name-input { text-align: right; }
+        .name-input::placeholder { color: rgba(182, 255, 0, 0.3); }
+
+        .score-row { display: flex; align-items: center; gap: 10px; }
+
+        .score { 
+            font-family: 'DSEG7 Classic', sans-serif; font-weight: bold; font-style: italic;
+            font-size: 220px; line-height: 1; color: white; 
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 4px 4px 0px black;
+            letter-spacing: 5px; cursor: default; margin: 0;
+        }
+
+        .undo-btn {
+            font-size: 20px; color: #777; background: rgba(0,0,0,0.5); 
+            border: 1px solid #555; border-radius: 4px; 
+            width: 40px; height: 40px; cursor: pointer; 
+            font-family: 'Orbitron', sans-serif; margin-top: 20px;
+        }
+        .undo-btn:hover { color: var(--bx-red-orange); border-color: var(--bx-red-orange); background: black; }
+
+        /* 決まり手ボタン */
+        .command-area {
+            position: fixed; bottom: 90px; z-index: 50;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        #p1-commands { left: 20px; align-items: flex-start; }
+        #p2-commands { right: 20px; align-items: flex-end; }
+        
+        .hud-btn {
+            font-family: 'Chakra Petch', sans-serif; font-weight: bold; font-style: italic;
+            font-size: 16px; padding: 15px 0; width: 140px; 
+            border: 2px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.5);
+            color: white; cursor: pointer; transition: 0.1s; transform: skewX(-10deg);
+            text-shadow: 1px 1px 2px black; user-select: none; text-align: center;
+        }
+        .hud-btn:active { transform: skewX(-10deg) scale(0.95); background: rgba(255,255,255,0.3); }
+        .hud-btn span { display: block; transform: skewX(10deg); pointer-events: none; }
+
+        .btn-spin { border-color: var(--bx-blue); color: var(--bx-blue); }
+        .btn-over { border-color: var(--bx-orange); color: var(--bx-orange); }
+        .btn-burst { border-color: var(--bx-red-orange); color: var(--bx-red-orange); }
+        .btn-xtreme { border-color: var(--bx-red); color: var(--bx-red); font-size: 18px; background: linear-gradient(90deg, transparent, rgba(255,0,85,0.2)); }
+
+        /* WIN表示 */
+        #win-display {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.5); 
+            width: 100%; text-align: center;
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 900; font-style: italic; 
+            color: #fff000; 
+            text-shadow: 5px 5px 0px #000, 0 0 50px #fff000;
+            opacity: 0; transition: 0.3s; z-index: 70; pointer-events: none;
+            white-space: nowrap; 
+        }
+        
+        @keyframes glowing-win-anim {
+            0%   { text-shadow: 0 0 20px #fff, 0 0 40px #fff000, 0 0 60px #fff000, 4px 4px 0 #000; }
+            100% { text-shadow: 0 0 50px #fff, 0 0 100px #fff000, 0 0 150px #ffaa00, 4px 4px 0 #000; }
+        }
+        
+        .show-win { 
+            opacity: 1 !important; 
+            transform: translate(-50%, -50%) scale(1.05) !important;
+            animation: glowing-win-anim 0.8s infinite alternate ease-in-out;
+        }
+        
+        .win-name { font-size: 15vmin; display: block; line-height: 1; }
+        .win-label { font-size: 15vmin; display: block; margin-top: -0.15em; color: white; text-shadow: 0 0 30px white; line-height: 1; }
+
+        /* エフェクト共通 */
+        #effect-overlay {
+            position: fixed; top: 0; left: 0; z-index: 100;
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            width: 100vw; height: 100vh; pointer-events: none;
+        }
+        #effect-text {
+            font-family: 'DSEG7 Classic', sans-serif; font-weight: bold; font-style: italic;
+            color: white; text-shadow: 0 0 20px var(--bx-green), 4px 4px 0px black;
+            width: 90%; text-align: center;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .fade-out { opacity: 0 !important; }
+
+        /* タイマー */
+        .timer-style {
+            font-size: 40vmin !important; 
+            color: white;
+            text-shadow: 0 0 30px rgba(255,255,255,0.8), 5px 5px 0 black;
+            animation: none !important;
+        }
+        .ef-time-up {
+            color: var(--bx-red) !important; text-shadow: 0 0 40px var(--bx-red), 4px 4px 0px black !important;
+            animation: none !important; font-size: 40vmin !important; 
+        }
+
+        /* 決まり手表示 */
+        .effect-finish-style {
+            font-family: 'Orbitron', sans-serif !important; 
+            font-size: 18vmin !important; 
+            line-height: 1.0 !important;
+            animation: none !important;
+            transform: scale(1.1); 
+            white-space: pre-wrap; 
+        }
+        .ef-spin { color: var(--bx-blue) !important; text-shadow: 0 0 30px var(--bx-blue), 3px 3px 0 black !important; }
+        .ef-over { color: var(--bx-orange) !important; text-shadow: 0 0 30px var(--bx-orange), 3px 3px 0 black !important; }
+        .ef-burst { color: var(--bx-red-orange) !important; text-shadow: 0 0 30px var(--bx-red-orange), 3px 3px 0 black !important; }
+        .ef-xtreme { color: var(--bx-red) !important; text-shadow: 0 0 40px var(--bx-red), 4px 4px 0 black !important; }
+
+        /* インターバル・オープニング用 */
+        .interstitial-style {
+            font-family: 'Orbitron', sans-serif !important; 
+            font-size: 12vmin !important; 
+            line-height: 1.1 !important;
+            color: white !important; 
+            text-shadow: 0 0 20px rgba(255,255,255,0.5), 4px 4px 0 black !important;
+            animation: none !important;
+            white-space: normal !important;
+        }
+        .interstitial-small { font-size: 5vmin; display: block; margin-bottom: 5px; color: #ccc; }
+        
+        .interstitial-huge { 
+            font-size: 25vmin; 
+            display: block; 
+            font-weight: 900; 
+            color: var(--bx-yellow); 
+            text-shadow: 0 0 20px var(--bx-yellow), 4px 4px 0 black;
+            line-height: 0.9; 
+            margin: 0; 
+        }
+        
+        .intro-yellow { color: var(--bx-yellow) !important; text-shadow: 0 0 30px var(--bx-yellow), 3px 3px 0 black !important; }
+        .intro-red { color: var(--bx-red) !important; text-shadow: 0 0 30px var(--bx-red), 3px 3px 0 black !important; }
+
+        @media screen and (max-width: 800px) {
+            .score { font-size: 100px; }
+            .name-input { font-size: 20px; width: 150px; }
+            .player-info { top: 70px; }
+            .hud-btn { width: 100px; padding: 10px 0; font-size: 12px; }
+        }
+
+    </style>
+</head>
+<body>
+    <video id="camera-bg" autoplay playsinline></video>
+    <div class="scan-line"></div>
+    <div id="effect-overlay"><div id="effect-text"></div></div>
+    
+    <div id="p1-info" class="player-info">
+        <input type="text" id="name1" class="name-input" value="PLAYER 1" placeholder="NAME">
+        <div class="score-row">
+            <div id="score1" class="score">0</div>
+            <button class="undo-btn" onclick="undoScore(1)">-1</button>
+        </div>
+    </div>
+
+    <div id="p2-info" class="player-info">
+        <input type="text" id="name2" class="name-input" value="PLAYER 2" placeholder="NAME">
+        <div class="score-row">
+            <button class="undo-btn" onclick="undoScore(2)">-1</button>
+            <div id="score2" class="score">0</div>
+        </div>
+    </div>
+
+    <div id="p1-commands" class="command-area">
+        <div class="hud-btn btn-xtreme" onclick="addScore(1, 3, 'XTREME')"><span>XTREME(3)</span></div>
+        <div class="hud-btn btn-burst" onclick="addScore(1, 2, 'BURST')"><span>BURST (2)</span></div>
+        <div class="hud-btn btn-over" onclick="addScore(1, 2, 'OVER')"><span>OVER (2)</span></div>
+        <div class="hud-btn btn-spin" onclick="addScore(1, 1, 'SPIN')"><span>SPIN (1)</span></div>
+    </div>
+
+    <div id="p2-commands" class="command-area">
+        <div class="hud-btn btn-xtreme" onclick="addScore(2, 3, 'XTREME')"><span>XTREME(3)</span></div>
+        <div class="hud-btn btn-burst" onclick="addScore(2, 2, 'BURST')"><span>BURST (2)</span></div>
+        <div class="hud-btn btn-over" onclick="addScore(2, 2, 'OVER')"><span>OVER (2)</span></div>
+        <div class="hud-btn btn-spin" onclick="addScore(2, 1, 'SPIN')"><span>SPIN (1)</span></div>
+    </div>
+
+    <div id="win-display"></div>
+
+    <button class="system-btn btn-reset" onclick="resetGame()">R</button>
+    <button class="system-btn btn-timer" onclick="toggleTimer()">T</button>
+    <button class="system-btn btn-bg" onclick="toggleBackground()">B</button>
+    <button class="system-btn btn-fullscreen" onclick="toggleFullScreen()">F</button>
+    <button class="system-btn btn-winpoint" onclick="toggleWinPoint()" id="btn-winpoint">4</button>
+
+    <script>
+        let s1 = 0; let s2 = 0; let isFinished = false;
+        let timerInterval = null;
+        let isCountingDown = false; 
+        
+        let effectTimeout = null; 
+        let cleanupTimeout = null;
+        
+        let cursorTimeout = null; 
+        let winScoreLimit = 4;
+        let battleCount = 1; 
+
+        async function setupCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+                document.getElementById('camera-bg').srcObject = stream;
+            } catch (err) { console.log("Camera Error", err); }
+        }
+        setupCamera();
+
+        function resetCursorTimer() {
+            document.body.style.cursor = 'default';
+            if (cursorTimeout) clearTimeout(cursorTimeout);
+            cursorTimeout = setTimeout(() => {
+                document.body.style.cursor = 'none';
+            }, 3000); 
+        }
+        window.addEventListener('mousemove', resetCursorTimer);
+        window.addEventListener('touchstart', resetCursorTimer);
+        resetCursorTimer();
+
+        function blurFocus() {
+            if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+            }
+        }
+
+        function toggleBackground() {
+            blurFocus();
+            document.body.classList.toggle('green-mode');
+        }
+
+        function toggleWinPoint() {
+            blurFocus();
+            const btn = document.getElementById('btn-winpoint');
+            if (winScoreLimit === 4) {
+                winScoreLimit = 2;
+                btn.innerText = "2";
+            } else {
+                winScoreLimit = 4;
+                btn.innerText = "4";
+            }
+        }
+
+        // ★追加: フルスクリーン切り替え
+        function toggleFullScreen() {
+            blurFocus();
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function showOverlayText(htmlContent, styleClass, displayTime = 0) {
+            const overlay = document.getElementById('effect-overlay');
+            const textEl = document.getElementById('effect-text');
+            
+            clearTimeout(effectTimeout);
+            clearTimeout(cleanupTimeout);
+
+            textEl.className = styleClass;
+            textEl.innerHTML = htmlContent;
+            overlay.style.display = 'flex';
+            textEl.classList.remove('fade-out');
+            
+            if (displayTime > 0) {
+                effectTimeout = setTimeout(() => {
+                    textEl.classList.add('fade-out');
+                    cleanupTimeout = setTimeout(() => {
+                        overlay.style.display = 'none';
+                        textEl.classList.remove('fade-out');
+                    }, 500); 
+                }, displayTime);
+            }
+        }
+
+        function showCenterEffect(text, styleClass, autoHide = true) {
+            showOverlayText(text, 'effect-finish-style ' + styleClass, autoHide ? 2000 : 0);
+        }
+
+        function showIntro() {
+            // ★修正: 配置と色を変更
+            const html = `<span class="intro-yellow">ITABASHI</span><br><span class="intro-yellow">BEY BATTLE</span><br><br><span class="intro-red">Ready......</span>`;
+            showOverlayText(html, 'interstitial-style', 4000); 
+        }
+
+        function showNextBattle() {
+            battleCount++;
+            let suffix = "th";
+            if (battleCount === 2) suffix = "nd";
+            else if (battleCount === 3) suffix = "rd";
+            
+            let centerText = `${battleCount}${suffix}`; 
+
+            // ★修正: 7戦目 または 両者リーチ(あと1点)の場合にFINAL表示
+            if ( (s1 === winScoreLimit - 1) && (s2 === winScoreLimit - 1) ) {
+                centerText = "FINAL";
+            }
+            else if (battleCount >= 7) {
+                centerText = "FINAL";
+            }
+
+            let html = `NEXT to<br><span class="interstitial-huge">${centerText}</span>BATTLE`;
+            showOverlayText(html, 'interstitial-style', 2500); 
+        }
+
+        function toggleTimer() {
+            blurFocus();
+            if (isCountingDown) stopTimer();
+            else startTimer();
+        }
+
+        function startTimer() {
+            isCountingDown = true;
+            const overlay = document.getElementById('effect-overlay');
+            const textEl = document.getElementById('effect-text');
+            
+            clearTimeout(effectTimeout);
+            clearTimeout(cleanupTimeout);
+            
+            textEl.className = 'timer-style'; 
+            textEl.classList.remove('fade-out'); 
+            overlay.style.display = 'flex';
+            let count = 10;
+            textEl.innerText = count;
+
+            timerInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    textEl.innerText = count;
+                } else {
+                    clearInterval(timerInterval);
+                    isCountingDown = false;
+                    textEl.innerText = "0";
+                    textEl.className = 'ef-time-up'; 
+                    
+                    cleanupTimeout = setTimeout(() => { 
+                        overlay.style.display = 'none'; 
+                        textEl.classList.remove('ef-time-up');
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            isCountingDown = false;
+            const overlay = document.getElementById('effect-overlay');
+            overlay.style.display = 'none';
+            document.getElementById('effect-text').className = '';
+            clearTimeout(effectTimeout);
+            clearTimeout(cleanupTimeout);
+        }
+
+        function addScore(player, pts, finishType) {
+            blurFocus();
+            if (isFinished) return;
+            if (isCountingDown) stopTimer(); 
+
+            let styleClass = '';
+            switch(finishType) {
+                case 'SPIN': styleClass = 'ef-spin'; break;
+                case 'OVER': styleClass = 'ef-over'; break;
+                case 'BURST': styleClass = 'ef-burst'; break;
+                case 'XTREME': styleClass = 'ef-xtreme'; break;
+            }
+            showCenterEffect(finishType + "<br>FINISH", styleClass, true);
+
+            if (player === 1) {
+                s1 = Math.min(s1 + pts, winScoreLimit);
+                document.getElementById('score1').innerText = s1;
+            } else {
+                s2 = Math.min(s2 + pts, winScoreLimit);
+                document.getElementById('score2').innerText = s2;
+            }
+
+            if ( (player === 1 && s1 >= winScoreLimit) || (player === 2 && s2 >= winScoreLimit) ) {
+                isFinished = true; 
+                setTimeout(() => { finishGame(player); }, 2500); 
+            } else {
+                setTimeout(() => { showNextBattle(); }, 2500);
+            }
+        }
+
+        function undoScore(player) {
+            blurFocus();
+            if (player === 1) {
+                if (s1 > 0) {
+                    s1 -= 1; 
+                    document.getElementById('score1').innerText = s1;
+                }
+            } else {
+                if (s2 > 0) {
+                    s2 -= 1;
+                    document.getElementById('score2').innerText = s2;
+                }
+            }
+        }
+
+        function finishGame(winnerNum) {
+            isFinished = true;
+            const winLabel = document.getElementById('win-display');
+            const nameInput = document.getElementById('name' + winnerNum);
+            const playerName = nameInput.value;
+
+            winLabel.innerHTML = `<span class="win-name">${playerName}</span><span class="win-label">WIN</span>`;
+            winLabel.classList.add('show-win');
+            
+            const scoreElem = document.getElementById('score' + winnerNum);
+            scoreElem.style.color = "#fff000";
+            scoreElem.style.textShadow = "0 0 10px #fff, 0 0 30px #fff000";
+        }
+
+        function resetGame() {
+            blurFocus();
+            s1 = 0; s2 = 0; isFinished = false;
+            battleCount = 1; 
+            
+            stopTimer();
+            document.getElementById('effect-overlay').style.display = 'none';
+            document.getElementById('score1').innerText = 0;
+            document.getElementById('score2').innerText = 0;
+            const defaultShadow = "0 0 20px rgba(255, 255, 255, 0.8), 4px 4px 0px black";
+            document.getElementById('score1').style.color = "white";
+            document.getElementById('score1').style.textShadow = defaultShadow;
+            document.getElementById('score2').style.color = "white";
+            document.getElementById('score2').style.textShadow = defaultShadow;
+            document.getElementById('win-display').classList.remove('show-win');
+
+            showIntro();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'INPUT') return;
+
+            const code = e.keyCode;
+            if (code === 13) {
+                e.preventDefault();
+                toggleTimer(); 
+                return;
+            }
+
+            // P1
+            if (code === 103 || code === 55) addScore(1, 3, 'XTREME'); 
+            if (code === 100 || code === 52) addScore(1, 2, 'BURST'); 
+            if (code === 97 || code === 49)  addScore(1, 2, 'OVER');   
+            if (code === 96 || code === 48)  addScore(1, 1, 'SPIN');   
+            if (code === 104 || code === 56) undoScore(1);
+
+            // P2
+            if (code === 105 || code === 57) addScore(2, 3, 'XTREME'); 
+            if (code === 102 || code === 54) addScore(2, 2, 'BURST');  
+            if (code === 99 || code === 51)  addScore(2, 2, 'OVER');   
+            if (code === 110 || code === 190) addScore(2, 1, 'SPIN');  
+            if (code === 98 || code === 50)  undoScore(2);
+
+            if (code === 111 || code === 191) resetGame(); 
+        });
+    </script>
+</body>
+</html>
