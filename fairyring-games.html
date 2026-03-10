@@ -201,6 +201,13 @@
   }
   .btn-reset:hover { border-color: var(--accent2); color: var(--accent2); background: #fff0f8; }
 
+  .btn-reshuffle {
+    padding: 8px 16px; background: var(--white); border: 2px solid var(--accent1);
+    border-radius: 999px; color: var(--accent1); font-family: inherit;
+    font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-reshuffle:hover { background: var(--bg2); box-shadow: 0 2px 10px rgba(192,132,252,0.2); }
+
   /* ── Results bar ── */
   .results-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 0 12px; }
   .results-count { font-size: 0.82rem; color: var(--text3); font-weight: 600; }
@@ -231,166 +238,6 @@
     #gameGrid { grid-template-columns:1fr; }
   }
 
-  /* ── Concierge Button ── */
-  .concierge-btn {
-    margin-top: 16px;
-    padding: 11px 26px;
-    background: linear-gradient(135deg, #a855f7, #ec4899);
-    color: white; border: none; border-radius: 999px;
-    font-family: "Nunito", sans-serif; font-size: 0.9rem; font-weight: 800;
-    cursor: pointer; box-shadow: 0 4px 20px rgba(168,85,247,0.35);
-    transition: transform 0.2s, box-shadow 0.2s;
-    letter-spacing: 0.03em;
-  }
-  .concierge-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(168,85,247,0.45);
-  }
-  .concierge-btn:active { transform: translateY(0); }
-
-  /* ── Concierge Modal Overlay ── */
-  .concierge-overlay {
-    display: none; position: fixed; inset: 0; z-index: 1000;
-    background: rgba(61,42,90,0.45); backdrop-filter: blur(6px);
-    align-items: center; justify-content: center; padding: 20px;
-  }
-  .concierge-overlay.open { display: flex; animation: fadeInOverlay 0.22s ease; }
-  @keyframes fadeInOverlay { from { opacity:0; } to { opacity:1; } }
-
-  .concierge-modal {
-    background: var(--white); border-radius: 24px;
-    border: 2px solid var(--border);
-    box-shadow: 0 24px 80px rgba(160,100,220,0.22);
-    width: 100%; max-width: 680px; max-height: 88vh;
-    overflow-y: auto; animation: slideUpModal 0.28s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  @keyframes slideUpModal {
-    from { opacity:0; transform: translateY(24px) scale(0.97); }
-    to   { opacity:1; transform: translateY(0)    scale(1); }
-  }
-
-  .concierge-modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 22px 24px 18px;
-    border-bottom: 2px solid var(--border);
-    background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%);
-    border-radius: 22px 22px 0 0;
-  }
-  .concierge-title-wrap { display: flex; align-items: center; gap: 14px; }
-  .concierge-fairy { font-size: 2rem; }
-  .concierge-title {
-    font-family: "Nunito", sans-serif; font-size: 1.15rem; font-weight: 900;
-    background: linear-gradient(135deg,#a855f7,#ec4899);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .concierge-sub { font-size: 0.75rem; color: var(--text2); margin-top: 2px; }
-  .concierge-close {
-    width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--border);
-    background: white; color: var(--text2); font-size: 0.85rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; font-weight: 700;
-    transition: all 0.2s; flex-shrink: 0;
-  }
-  .concierge-close:hover { border-color: var(--accent2); color: var(--accent2); background: #fff0f8; }
-
-  .concierge-body { padding: 22px 24px; }
-
-  /* Examples */
-  .concierge-examples-label { font-size: 0.78rem; color: var(--text2); font-weight: 700; margin-bottom: 10px; }
-  .example-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-  .example-chip {
-    padding: 6px 14px; background: var(--bg2); border: 1.5px solid var(--border);
-    border-radius: 999px; font-size: 0.75rem; color: var(--text2); font-weight: 600;
-    cursor: pointer; transition: all 0.18s; font-family: inherit;
-  }
-  .example-chip:hover { background: #ede9fe; border-color: var(--accent1); color: var(--accent1); }
-
-  /* Textarea */
-  .concierge-input-wrap {
-    background: var(--bg); border: 2px solid var(--border);
-    border-radius: 16px; overflow: hidden; transition: border-color 0.2s;
-  }
-  .concierge-input-wrap:focus-within { border-color: var(--accent1); box-shadow: 0 0 0 3px rgba(192,132,252,0.15); }
-  .concierge-textarea {
-    width: 100%; min-height: 110px; padding: 14px 16px;
-    background: transparent; border: none; resize: vertical;
-    font-family: "Noto Sans JP", sans-serif; font-size: 0.88rem; color: var(--text);
-    outline: none; line-height: 1.7;
-  }
-  .concierge-textarea::placeholder { color: var(--text3); }
-  .concierge-input-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px; border-top: 1.5px solid var(--border); background: var(--white);
-  }
-  .concierge-hint { font-size: 0.72rem; color: var(--text3); font-weight: 600; }
-  .concierge-submit {
-    padding: 9px 22px;
-    background: linear-gradient(135deg, #a855f7, #ec4899);
-    color: white; border: none; border-radius: 999px;
-    font-family: "Nunito", sans-serif; font-size: 0.85rem; font-weight: 800;
-    cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 3px 12px rgba(168,85,247,0.3);
-  }
-  .concierge-submit:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(168,85,247,0.4); }
-  .concierge-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  /* Result */
-  .concierge-result { margin-top: 24px; animation: popIn 0.3s ease both; }
-  .concierge-result-header {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
-  }
-  .concierge-result-icon { font-size: 1.3rem; }
-  .concierge-result-title {
-    font-family: "Nunito", sans-serif; font-size: 1rem; font-weight: 900; color: var(--text);
-  }
-  .concierge-cards { display: flex; flex-direction: column; gap: 14px; }
-
-  /* AI推薦コメントバナー */
-  .ai-comment-banner {
-    background: linear-gradient(135deg, #f3e8ff, #fce7f3);
-    border: 1.5px solid var(--border); border-radius: 12px;
-    padding: 12px 15px; margin: 0 0 0 0;
-  }
-  .ai-comment-reason {
-    font-size: 0.78rem; color: var(--accent1); font-weight: 700; margin-bottom: 4px;
-  }
-  .ai-comment-text { font-size: 0.8rem; color: var(--text); line-height: 1.6; margin-bottom: 6px; }
-  .ai-fitting-label { font-size: 0.72rem; color: var(--accent2); font-weight: 700; margin-top: 6px; }
-  .ai-fitting-text { font-size: 0.78rem; color: var(--text2); line-height: 1.55; }
-
-  .concierge-card-wrap { border-radius: var(--radius); overflow: hidden; border: 2px solid var(--border); box-shadow: var(--shadow); }
-  .concierge-rank-badge {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 16px; font-size: 0.78rem; font-weight: 800;
-    font-family: "Nunito", sans-serif; color: white;
-    background: linear-gradient(90deg, #a855f7, #ec4899);
-  }
-
-  /* Loading spinner */
-  .concierge-loading {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 40px 20px; gap: 14px; color: var(--text2);
-    font-size: 0.88rem; font-weight: 600;
-  }
-  .spinner {
-    width: 36px; height: 36px; border: 3px solid var(--border);
-    border-top-color: var(--accent1); border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Error */
-  .concierge-error {
-    margin-top: 16px; padding: 14px 16px; border-radius: 12px;
-    background: #fff1f2; border: 1.5px solid #fecdd3;
-    color: #be123c; font-size: 0.82rem; font-weight: 600;
-  }
-
-  @media (max-width: 600px) {
-    .concierge-modal { border-radius: 18px; }
-    .concierge-body { padding: 16px; }
-    .example-chips { gap: 6px; }
-  }
-
 </style>
 </head>
 <body>
@@ -401,57 +248,8 @@
     <div class="logo-ja">ボードゲームサークル フェアリーリング</div>
     <div class="header-desc">みんなで遊ぼう！ゲームライブラリ 🎲</div>
     <div class="total-badge" id="totalBadge">全 <span id="totalNum">0</span> タイトル所蔵</div>
-    <button class="concierge-btn" id="openConcierge">🧚 コンシェルジュに相談</button>
   </div>
 </header>
-
-<!-- ── Concierge Modal ── -->
-<div class="concierge-overlay" id="conciergeOverlay">
-  <div class="concierge-modal">
-    <div class="concierge-modal-header">
-      <div class="concierge-title-wrap">
-        <span class="concierge-fairy">🧚</span>
-        <div>
-          <div class="concierge-title">ボドゲ・コンシェルジュ</div>
-          <div class="concierge-sub">AIがあなたにぴったりのゲームを提案します</div>
-        </div>
-      </div>
-      <button class="concierge-close" id="closeConcierge">✕</button>
-    </div>
-
-    <div class="concierge-body" id="conciergeBody">
-      <div class="concierge-examples">
-        <p class="concierge-examples-label">💬 こんな相談ができます</p>
-        <div class="example-chips">
-          <button class="example-chip" onclick="setExample(this)">4人で重いゲームをじっくり遊びたい</button>
-          <button class="example-chip" onclick="setExample(this)">初心者でも楽しめる協力ゲームが欲しい</button>
-          <button class="example-chip" onclick="setExample(this)">2人でできる短時間の推理ゲームを探してる</button>
-          <button class="example-chip" onclick="setExample(this)">大人数でわいわい盛り上がりたい</button>
-        </div>
-      </div>
-
-      <div class="concierge-input-wrap">
-        <textarea class="concierge-textarea" id="conciergeInput"
-          placeholder="例：「子供も一緒に遊べるファミリーゲームが欲しい」「ダンジョン探索系で長時間遊べるものを」など、なんでもお気軽にどうぞ！"></textarea>
-        <div class="concierge-input-footer">
-          <span class="concierge-hint">✨ 人数・時間・雰囲気など自由に書いてください</span>
-          <button class="concierge-submit" id="conciergeSubmit" onclick="askConcierge()">
-            <span id="conciergeSubmitText">✨ 相談する</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 結果エリア -->
-      <div class="concierge-result" id="conciergeResult" style="display:none">
-        <div class="concierge-result-header">
-          <span class="concierge-result-icon">🎯</span>
-          <span class="concierge-result-title">AIのおすすめ 3選</span>
-        </div>
-        <div class="concierge-cards" id="conciergeCards"></div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="container">
 
@@ -519,6 +317,7 @@
   <!-- ─ Results ─ -->
   <div class="results-bar">
     <p class="results-count" id="resultsCount"><span>0</span> 件表示中</p>
+    <button class="btn-reshuffle" id="reshuffleBtn" style="display:none">🧚 妖精さん選びなおして！</button>
     <div class="view-toggle">
       <button class="view-btn active" id="gridBtn" title="グリッド">⊞</button>
       <button class="view-btn" id="listBtn" title="リスト">☰</button>
@@ -734,9 +533,11 @@ function applyFilters() {
 
   // フィルター未指定 → ランダム10件
   var filtered = isFiltered();
+  var reshuffleBtn = document.getElementById("reshuffleBtn");
+  reshuffleBtn.style.display = filtered ? "none" : "inline-block";
   var display = result.slice();
   if (!filtered) {
-    display = shuffled(display).slice(0, 10);
+    display = shuffled(display).slice(0, 12);
   } else {
     if      (sortVal === "name")        display.sort(function(a,b) { return a["ゲーム名"].localeCompare(b["ゲーム名"],"ja"); });
     else if (sortVal === "time_asc")    display.sort(function(a,b) { return (parseInt(a["最少時間"])||0) - (parseInt(b["最少時間"])||0); });
@@ -748,7 +549,7 @@ function applyFilters() {
   // カウント表示
   var countEl = document.getElementById("resultsCount");
   if (!filtered) {
-    countEl.innerHTML = '<span>10</span> 件 ランダム表示中（全' + ALL_GAMES.length + '件）';
+    countEl.innerHTML = '妖精さんが<span>' + display.length + '</span>件のボードゲームを表示中（全' + ALL_GAMES.length + '件）';
   } else {
     countEl.innerHTML = '<span>' + result.length + '</span> 件表示中';
   }
@@ -796,96 +597,11 @@ function setView(v) {
     el.addEventListener("change", applyFilters);
   });
 document.getElementById("resetBtn").addEventListener("click", resetFilters);
+document.getElementById("reshuffleBtn").addEventListener("click", applyFilters);
 document.getElementById("gridBtn").addEventListener("click", function() { setView("grid"); });
 document.getElementById("listBtn").addEventListener("click", function() { setView("list"); });
 
 // ── Init ── DOMContentLoaded内で実行（GASデータ取得後に呼び出し）
-
-// ── Concierge ─────────────────────────────────────────────────────────
-
-document.getElementById("openConcierge").addEventListener("click", function() {
-  document.getElementById("conciergeOverlay").classList.add("open");
-  document.body.style.overflow = "hidden";
-});
-
-function closeConcierge() {
-  document.getElementById("conciergeOverlay").classList.remove("open");
-  document.body.style.overflow = "";
-}
-document.getElementById("closeConcierge").addEventListener("click", closeConcierge);
-document.getElementById("conciergeOverlay").addEventListener("click", function(e) {
-  if (e.target === this) closeConcierge();
-});
-
-function setExample(el) {
-  document.getElementById("conciergeInput").value = el.textContent;
-  document.getElementById("conciergeInput").focus();
-}
-
-async function askConcierge() {
-  var query = document.getElementById("conciergeInput").value.trim();
-  if (!query) {
-    document.getElementById("conciergeInput").focus();
-    return;
-  }
-
-  var btn = document.getElementById("conciergeSubmit");
-  var resultEl = document.getElementById("conciergeResult");
-  var cardsEl  = document.getElementById("conciergeCards");
-
-  btn.disabled = true;
-  document.getElementById("conciergeSubmitText").textContent = "✨ 考え中...";
-  resultEl.style.display = "block";
-  cardsEl.innerHTML = '<div class="concierge-loading"><div class="spinner"></div><span>🧚 フェアリーリングのゲームから最適な3つを選んでいます...</span></div>';
-
-  try {
-    var response = await fetch(GAS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "concierge", query: query })
-    });
-
-    var data = await response.json();
-
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      throw new Error("AIからの応答が取得できませんでした");
-    }
-
-    var ranks = ["🥇 1位", "🥈 2位", "🥉 3位"];
-    var html = "";
-
-    data.forEach(function(item, i) {
-      var game = ALL_GAMES.find(function(g) {
-        return g["ゲーム名"] === item.game_name ||
-               g["ゲーム名"].includes(item.game_name) ||
-               item.game_name.includes(g["ゲーム名"]);
-      });
-
-      if (!game) {
-        game = { "ゲーム名": item.game_name, "プレイ人数": "?", "プレイ時間": "?", "テーマ": "", "メカニクス": "", "デザイナー": "", "発売年": "", "キャッチフレーズ": "", "ゲーム概要": "" };
-      }
-
-      html += '<div class="concierge-card-wrap">';
-      html += '<div class="concierge-rank-badge">' + ranks[i] + ' ' + esc(item.game_name) + '</div>';
-      html += '<div class="ai-comment-banner">';
-      html += '<div class="ai-comment-reason">💜 推薦理由</div>';
-      html += '<div class="ai-comment-text">' + esc(item.reason || "") + '</div>';
-      html += '<div class="ai-fitting-label">🎯 ご要望への合致点</div>';
-      html += '<div class="ai-fitting-text">' + esc(item.fitting_point || "") + '</div>';
-      html += '</div>';
-      html += cardHTML(game, "");
-      html += '</div>';
-    });
-
-    cardsEl.innerHTML = html;
-
-  } catch(err) {
-    cardsEl.innerHTML = '<div class="concierge-error">⚠️ エラーが発生しました: ' + esc(err.message) + '<br>しばらく経ってからもう一度お試しください。</div>';
-  } finally {
-    btn.disabled = false;
-    document.getElementById("conciergeSubmitText").textContent = "✨ 相談する";
-  }
-}
 
 </script>
 </body>
