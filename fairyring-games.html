@@ -824,44 +824,54 @@ function setExample(el) {
 
 async function askConcierge() {
   var query = document.getElementById("conciergeInput").value.trim();
-  if (!query) return;
+  if (!query) {
+    document.getElementById("conciergeInput").focus();
+    return;
+  }
 
   var btn = document.getElementById("conciergeSubmit");
   var resultEl = document.getElementById("conciergeResult");
   var cardsEl  = document.getElementById("conciergeCards");
 
   btn.disabled = true;
-  document.getElementById("conciergeSubmitText").textContent = "✨ AIが考え中...";
+  document.getElementById("conciergeSubmitText").textContent = "✨ 考え中...";
   resultEl.style.display = "block";
-  cardsEl.innerHTML = '<div class="concierge-loading"><div class="spinner"></div><span>🧚 リストから最適なゲームを探しています...</span></div>';
+  cardsEl.innerHTML = '<div class="concierge-loading"><div class="spinner"></div><span>🧚 フェアリーリングのゲームから最適な3つを選んでいます...</span></div>';
 
   try {
-    // POSTではなく、URLの後ろに情報をくっつけて送る (GET方式)
-    var url = GAS_URL + "?action=concierge&query=" + encodeURIComponent(query);
-    var response = await fetch(url); // シンプルなfetch
-    
-    if (!response.ok) throw new Error("通信エラーが発生しました");
+    var response = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "concierge", query: query })
+    });
 
     var data = await response.json();
+
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      throw new Error("AIからの応答が取得できませんでした");
+    }
 
     var ranks = ["🥇 1位", "🥈 2位", "🥉 3位"];
     var html = "";
 
     data.forEach(function(item, i) {
-      // 全ゲームリストから名前が一致するものを探す
-      var game = ALL_GAMES.find(g => g["ゲーム名"].includes(item.game_name) || item.game_name.includes(g["ゲーム名"]));
-      
+      var game = ALL_GAMES.find(function(g) {
+        return g["ゲーム名"] === item.game_name ||
+               g["ゲーム名"].includes(item.game_name) ||
+               item.game_name.includes(g["ゲーム名"]);
+      });
+
       if (!game) {
-        game = { "ゲーム名": item.game_name, "プレイ人数": "-", "プレイ時間": "-", "テーマ": "AI推薦" };
+        game = { "ゲーム名": item.game_name, "プレイ人数": "?", "プレイ時間": "?", "テーマ": "", "メカニクス": "", "デザイナー": "", "発売年": "", "キャッチフレーズ": "", "ゲーム概要": "" };
       }
 
       html += '<div class="concierge-card-wrap">';
       html += '<div class="concierge-rank-badge">' + ranks[i] + ' ' + esc(item.game_name) + '</div>';
       html += '<div class="ai-comment-banner">';
       html += '<div class="ai-comment-reason">💜 推薦理由</div>';
-      html += '<div class="ai-comment-text">' + esc(item.reason) + '</div>';
-      html += '<div class="ai-fitting-label">🎯 要望への合致点</div>';
-      html += '<div class="ai-fitting-text">' + esc(item.fitting_point) + '</div>';
+      html += '<div class="ai-comment-text">' + esc(item.reason || "") + '</div>';
+      html += '<div class="ai-fitting-label">🎯 ご要望への合致点</div>';
+      html += '<div class="ai-fitting-text">' + esc(item.fitting_point || "") + '</div>';
       html += '</div>';
       html += cardHTML(game, "");
       html += '</div>';
@@ -870,13 +880,13 @@ async function askConcierge() {
     cardsEl.innerHTML = html;
 
   } catch(err) {
-    console.error(err);
-    cardsEl.innerHTML = '<div class="concierge-error">⚠️ エラーが発生しました。しばらく経ってから再度お試しください。</div>';
+    cardsEl.innerHTML = '<div class="concierge-error">⚠️ エラーが発生しました: ' + esc(err.message) + '<br>しばらく経ってからもう一度お試しください。</div>';
   } finally {
     btn.disabled = false;
     document.getElementById("conciergeSubmitText").textContent = "✨ 相談する";
   }
 }
+
 </script>
 </body>
 </html>
