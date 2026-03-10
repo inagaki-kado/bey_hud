@@ -87,10 +87,11 @@
   /* ── Fairy guide section ── */
   .fairy-guide {
     display: flex;
-    align-items: flex-end;
-    gap: 0;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 40px;
     position: relative;
+    padding-left: 20px;
   }
   .fairy-img-wrap {
     flex-shrink: 0;
@@ -98,6 +99,9 @@
     position: relative;
     animation: fairyFloat 3s ease-in-out infinite;
     filter: drop-shadow(0 4px 12px rgba(160,100,220,0.18));
+    align-self: flex-start;
+    margin-left: 20px;
+    z-index: 1;
   }
   @keyframes fairyFloat {
     0%, 100% { transform: translateY(0px) rotate(-2deg); }
@@ -112,32 +116,34 @@
     border-radius: 20px 20px 20px 4px;
     padding: 16px 20px;
     box-shadow: var(--shadow);
-    margin-left: 16px;
-    flex: 1;
+    margin-bottom: -10px;
+    margin-left: 0;
+    max-width: 480px;
     position: relative;
     animation: bubbleIn 0.5s ease both 0.2s;
   }
   @keyframes bubbleIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to   { opacity: 1; transform: translateX(0); }
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
+  /* 吹き出しの三角（下向き・左寄り） */
   .speech-bubble::before {
     content: "";
     position: absolute;
-    left: -10px; bottom: 18px;
+    bottom: -12px; left: 36px;
     width: 0; height: 0;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    border-right: 10px solid var(--border);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid var(--border);
   }
   .speech-bubble::after {
     content: "";
     position: absolute;
-    left: -7px; bottom: 19px;
+    bottom: -9px; left: 37px;
     width: 0; height: 0;
-    border-top: 7px solid transparent;
-    border-bottom: 7px solid transparent;
-    border-right: 9px solid white;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 10px solid white;
   }
   .bubble-text {
     font-size: 0.88rem;
@@ -389,14 +395,54 @@
     color: var(--accent2); font-size: 0.85rem; line-height: 1.7;
   }
 
+  /* ── Info section ── */
+  .info-section {
+    background: white; border: 2px solid var(--border);
+    border-radius: var(--radius); padding: 24px 28px;
+    margin-bottom: 32px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .info-section-bar {
+    height: 6px; background: linear-gradient(90deg, #a855f7, #ec4899, #06b6d4);
+    margin: -24px -28px 20px; display: block;
+  }
+  .info-section-title {
+    font-family: "Nunito", sans-serif; font-weight: 900;
+    font-size: 0.88rem; color: var(--text2); margin-bottom: 14px; letter-spacing: 0.05em;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;
+  }
+  .info-chip {
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 14px 12px; text-align: center;
+  }
+  .info-chip .chip-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+  .info-chip .chip-label { font-size: 0.68rem; color: var(--text3); font-weight: 600; display: block; margin-bottom: 3px; }
+  .info-chip .chip-value { font-size: 0.92rem; font-weight: 700; color: var(--text); display: block; line-height: 1.4; }
+  .info-chip .chip-value.big {
+    font-family: "Nunito", sans-serif; font-size: 1.5rem; font-weight: 900;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .info-chip .chip-sub { font-size: 0.65rem; color: var(--accent2); display: block; margin-top: 3px; font-weight: 600; }
+  .info-note {
+    font-size: 0.78rem; color: var(--text2); line-height: 1.85;
+    border-top: 1.5px solid var(--border); padding-top: 16px;
+  }
+  .info-note a { color: var(--accent1); text-decoration: none; font-weight: 700; }
+  .info-note a:hover { text-decoration: underline; }
+  .info-note .note-row { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 3px; }
+
   /* ── Footer ── */
   footer {
-    text-align: center; padding: 24px;
-    font-size: 0.75rem; color: var(--text3);
-    border-top: 1.5px solid var(--border);
-    background: white;
+    text-align: center; padding: 28px 24px;
+    font-size: 0.78rem; color: var(--text3);
+    border-top: 1.5px solid var(--border); background: white;
   }
-  footer a { color: var(--text3); text-decoration: none; }
+  footer a { color: var(--accent1); text-decoration: none; font-weight: 700; }
+  footer a:hover { text-decoration: underline; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 10px; }
+  .footer-link-item { display: flex; align-items: center; gap: 5px; }
 
   /* ── Responsive ── */
   @media (max-width: 540px) {
@@ -414,8 +460,9 @@
 <!-- ── Header ── -->
 <header>
   <div class="logo-wrap">
-    <div class="logo-en">Fairy Ring</div>
-    <div class="logo-ja">ボードゲームサークル フェアリーリング</div>
+    <div style="font-size:0.75rem; color:var(--text3); letter-spacing:0.12em; margin-bottom:6px;">楽しく遊ぼう！ 成増ゲームの会</div>
+    <div class="logo-en">フェアリーリング</div>
+    <div class="logo-ja">ボードゲームサークル フェアリーリング（通称：ふぇありん）</div>
     <div class="header-sub">✨ ゲーム会スケジュール ✨</div>
     <div class="page-badge">🎲 次のゲーム会はいつ？</div>
   </div>
@@ -427,7 +474,6 @@
   <!-- Fairy guide -->
   <div class="fairy-guide">
     <div class="fairy-img-wrap">
-      <!-- fearingreen2.png を同じフォルダに置いてください -->
       <img src="fearingreen2.png" alt="フェアリーリングのキャラクター">
     </div>
     <div class="speech-bubble">
@@ -437,13 +483,92 @@
     </div>
   </div>
 
-  <!-- Section title -->
-  <div class="section-title">🗓️ 開催予定のゲーム会</div>
+  <!-- サークル基本情報（上に表示） -->
+  <div class="section-title">📋 フェアリーリングについて</div>
+  <div class="info-section">
+    <span class="info-section-bar"></span>
+    <div class="info-grid" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="info-chip">
+        <span class="chip-icon">💴</span>
+        <span class="chip-label">参加費</span>
+        <span class="chip-value big">500円</span>
+        <span class="chip-sub">中高生は200円（学生証提示）</span>
+      </div>
+      <div class="info-chip">
+        <span class="chip-icon">🎓</span>
+        <span class="chip-label">参加対象</span>
+        <span class="chip-value">中学生以上</span>
+        <span class="chip-sub">初心者・中高生大歓迎！</span>
+      </div>
+    </div>
+    <div class="info-note">
+      <div class="note-row">🧚 <span>板橋区成増で毎月<strong>第３日曜日</strong>に開催しているボードゲームサークルです。手軽に楽しめるものを中心に、いろいろなボードゲームをご用意してお待ちしています。お気軽にご参加ください✨</span></div>
+    </div>
+  </div>
 
-  <!-- Cards -->
+  <!-- 開催予定のゲーム会 -->
+  <div class="section-title" style="margin-top:8px;">🗓️ 開催予定のゲーム会</div>
   <div class="cards-container" id="cardsContainer">
     <div class="loading-state">
       ✨ ゲーム会情報を読み込んでいます<span class="loading-dots"></span>
+    </div>
+  </div>
+
+  <!-- 詳細情報 -->
+  <div class="section-title" style="margin-top:40px;">📍 会場・参加方法・注意事項</div>
+
+  <!-- 会場情報 -->
+  <div class="info-section">
+    <span class="info-section-bar"></span>
+    <div class="info-section-title">🏛️ 主な開催会場</div>
+    <div class="info-note">
+      <div class="note-row">📌 <span><strong>成増生涯学習センター（まなぽーと成増）</strong>
+        &nbsp;<a href="https://maps.app.goo.gl/jMLm3KVpVeA4EWM6A" target="_blank" rel="noopener">🗺️ Google Map</a><br>
+        〒175-0094 東京都板橋区成増1-12-40</span></div>
+      <div class="note-row">🚃 <span>東武東上線「成増」駅 南口 徒歩７分</span></div>
+      <div class="note-row">🚇 <span>東京メトロ有楽町線／副都心線「地下鉄成増」駅 ４番出口 徒歩５分</span></div>
+      <div class="note-row">🚗 <span>※駐車場はありません</span></div>
+      <div class="note-row" style="margin-top:8px;">⚠️ <span>使用する部屋は各回で異なります。当日、センター入口のホワイトボードをご確認ください。</span></div>
+    </div>
+  </div>
+
+  <!-- 参加方法 -->
+  <div class="info-section">
+    <span class="info-section-bar"></span>
+    <div class="info-section-title">📝 参加方法</div>
+    <div class="info-note">
+      <div class="note-row">💬 <span><strong>LINE公式アカウント「ボドゲのふぇありん公式」</strong>から参加予約をお願いします<br>
+        &nbsp;&nbsp;<a href="https://lin.ee/fSUlo9O" target="_blank" rel="noopener">→ 公式LINEを友だち追加する</a>　（締切：開催前日の23:59まで）</span></div>
+      <div class="note-row">📱 <span>※スマートフォンからのお申込み限定です</span></div>
+      <div class="note-row">👥 <span>複数名で参加される場合、代表者がまとめて予約していただいても大丈夫です</span></div>
+      <div class="note-row">🔢 <span>定員20名（スタッフ含む）を超えた場合、参加をお断りする場合があります。最新の予約状況は<a href="https://simblo.net/u/aimWXu" target="_blank" rel="noopener">公式ブログの開催情報ページ</a>でご確認ください</span></div>
+      <div class="note-row">🌟 <span>「当日急に参加したい！」という場合も、事前に公式LINEへご連絡ください。当日の参加状況を確認してご返答します（イベント運営中はすぐに返信できない場合があります）。</span></div>
+    </div>
+  </div>
+
+  <!-- 注意事項 -->
+  <div class="info-section">
+    <span class="info-section-bar"></span>
+    <div class="info-section-title">⚠️ 参加にあたっての注意事項</div>
+    <div class="info-note">
+      <div class="note-row">🎓 <span>参加対象は<strong>中学生以上</strong>。小学生以下の方は当日の状況によりお断りする場合があります（事前に公式LINEまでご相談ください）</span></div>
+      <div class="note-row">🌟 <span>中学生・高校生の方には参加特典があります。当日スタッフまでお声がけください</span></div>
+      <div class="note-row">👪 <span>未成年の方は、保護者にこのページを見せて参加の了解を取るようにしてください</span></div>
+      <div class="note-row">📋 <span>感染症発生時などの連絡先確保のため、当日に個人情報をお伺いします（回答必須）</span></div>
+      <div class="note-row" style="margin-top:8px; font-weight:700; color:var(--text);">🍱 会場内での飲食について</div>
+      <div class="note-row">✅ <span>飲食は基本OKです！飲み物は蓋が締まるもの（ペットボトル・水筒など）を推奨</span></div>
+      <div class="note-row">❌ <span>匂いの強いもの（カレーなど）や汁物（カップラーメンなど）はご遠慮ください</span></div>
+      <div class="note-row">🎮 <span>おやつの持込みはOKですが、ゲームプレイ中はボードゲームが汚れるのを防ぐため、食べるのはお控えください</span></div>
+      <div class="note-row">🏪 <span>近隣にコンビニ（セブンイレブン・ファミリーマート）、駅前にファミレスなどがあります。お弁当の持込みもOKです</span></div>
+    </div>
+  </div>
+
+  <!-- お問い合わせ -->
+  <div class="info-section" style="text-align:center;">
+    <span class="info-section-bar"></span>
+    <div style="font-size:0.85rem; color:var(--text2); line-height:2;">
+      より詳しい情報は <a href="https://simblo.net/u/aimWXu" target="_blank" rel="noopener">📝 公式ブログ</a> をご覧ください。<br>
+      お問い合わせは <a href="https://lin.ee/fSUlo9O" target="_blank" rel="noopener">💬 LINE公式アカウント「ボドゲのふぇありん公式」</a> までお願いします。
     </div>
   </div>
 
@@ -451,7 +576,11 @@
 
 <!-- ── Footer ── -->
 <footer>
-  <p>🧚 Fairy Ring — ボードゲームサークル &nbsp;|&nbsp; <a href="#">トップへ戻る</a></p>
+  <div class="footer-links">
+    <a class="footer-link-item" href="https://simblo.net/u/aimWXu" target="_blank" rel="noopener">📝 公式ブログ</a>
+    <a class="footer-link-item" href="https://lin.ee/fSUlo9O" target="_blank" rel="noopener">💬 公式LINE（参加予約）</a>
+  </div>
+  <p>🧚 Fairy Ring（ふぇありん） — ボードゲームサークル &nbsp;|&nbsp; 成増ゲームの会</p>
 </footer>
 
 <script>
@@ -514,7 +643,6 @@ function splitCSVLine(line) {
 //  日付処理
 // ============================================================
 var WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
-var MONTHS   = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 function parseDate(str) {
   if (!str) return null;
@@ -525,7 +653,7 @@ function parseDate(str) {
 
 function formatDateParts(d) {
   return {
-    month: MONTHS[d.getMonth()],
+    month: (d.getMonth()+1) + "月",
     day: d.getDate(),
     weekday: WEEKDAYS[d.getDay()],
     full: d.getFullYear() + "年" + (d.getMonth()+1) + "月" + d.getDate() + "日"
@@ -537,11 +665,8 @@ function formatDateParts(d) {
 // ============================================================
 function toEmbedUrl(url) {
   if (!url) return null;
-  // place URL: /place/...
-  var placeMatch = url.match(/google\.com\/maps\/place\/([^/@]+)/);
-  if (placeMatch) {
-    return "https://www.google.com/maps?q=" + encodeURIComponent(decodeURIComponent(placeMatch[1])) + "&output=embed";
-  }
+  // すでに埋め込み用URL
+  if (url.includes("/maps/embed")) return url;
   // @lat,lng
   var llMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
   if (llMatch) {
@@ -552,8 +677,11 @@ function toEmbedUrl(url) {
   if (qMatch) {
     return "https://www.google.com/maps?q=" + qMatch[1] + "&output=embed";
   }
-  // /embed/ URLs → use as-is
-  if (url.includes("/maps/embed")) return url;
+  // place URL: /place/...
+  var placeMatch = url.match(/google\.com\/maps\/place\/([^/@?]+)/);
+  if (placeMatch) {
+    return "https://www.google.com/maps?q=" + encodeURIComponent(decodeURIComponent(placeMatch[1])) + "&output=embed";
+  }
   return null;
 }
 
@@ -599,7 +727,7 @@ function buildCard(event, isNearest) {
   h += '<div class="info-col">';
 
   // Title
-  var titleDate = dateParts ? dateParts.full + ' ゲーム会' : 'ゲーム会';
+  var titleDate = d ? (d.getMonth()+1) + '月のフェアリーリングのボードゲーム会' : 'フェアリーリングのボードゲーム会';
   h += '<div class="event-title">🎲 ' + esc(titleDate) + '</div>';
 
   // Meta chips
