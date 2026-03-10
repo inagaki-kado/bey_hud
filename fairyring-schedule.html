@@ -126,24 +126,24 @@
     from { opacity: 0; transform: translateY(-10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  /* 吹き出しの三角（下向き・左寄り） */
+  /* 吹き出しの三角（上向き・左寄り） */
   .speech-bubble::before {
     content: "";
     position: absolute;
-    bottom: -12px; left: 36px;
+    top: -12px; left: 36px;
     width: 0; height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-top: 12px solid var(--border);
+    border-bottom: 12px solid var(--border);
   }
   .speech-bubble::after {
     content: "";
     position: absolute;
-    bottom: -9px; left: 37px;
+    top: -9px; left: 37px;
     width: 0; height: 0;
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
-    border-top: 10px solid white;
+    border-bottom: 10px solid white;
   }
   .bubble-text {
     font-size: 0.88rem;
